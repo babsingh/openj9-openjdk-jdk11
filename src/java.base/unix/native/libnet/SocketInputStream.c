@@ -25,7 +25,7 @@
 #include <errno.h>
 #include <stdlib.h>
 #include <string.h>
-
+#include <stdio.h>
 #include "jvm.h"
 #include "net_util.h"
 
@@ -95,18 +95,20 @@ Java_java_net_SocketInputStream_socketRead0(JNIEnv *env, jobject this,
     char BUF[MAX_BUFFER_LEN];
     char *bufP;
     jint fd, nread;
-
+    printf("socketRead0 errno0: %d\n", errno);
     if (IS_NULL(fdObj)) {
         JNU_ThrowByName(env, "java/net/SocketException",
                         "Socket closed");
-        return -1;
+        printf("fdObj is null\n");
+	return -1;
     }
     fd = (*env)->GetIntField(env, fdObj, IO_fd_fdID);
     if (fd == -1) {
         JNU_ThrowByName(env, "java/net/SocketException", "Socket closed");
-        return -1;
+        printf("fd is -1\n");
+	return -1;
     }
-
+    printf("socketRead0 errno1: %d\n", errno);
     /*
      * If the read is greater than our stack allocated buffer then
      * we allocate from the heap (up to a limit)
@@ -123,16 +125,20 @@ Java_java_net_SocketInputStream_socketRead0(JNIEnv *env, jobject this,
     } else {
         bufP = BUF;
     }
+    printf("socketRead0 errno2: %d\n", errno);
+
     if (timeout) {
         nread = NET_ReadWithTimeout(env, fd, bufP, len, timeout);
         if ((*env)->ExceptionCheck(env)) {
             if (bufP != BUF) {
                 free(bufP);
             }
+	    printf("NET_ReadWithTimeout nread: %d\n", nread);
             return nread;
         }
     } else {
         nread = NET_Read(fd, bufP, len);
+	printf("NET_Read fd: %d, bufP: %s, len: %d, nread: %d, errno: %d\n", fd, bufP, len, nread, errno);
     }
 
     if (nread <= 0) {

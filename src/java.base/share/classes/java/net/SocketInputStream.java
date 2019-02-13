@@ -145,6 +145,7 @@ class SocketInputStream extends FileInputStream {
 
         // EOF already encountered
         if (eof) {
+            System.out.println("SocketInputStream.read([b,I,I,I) eof: " + eof);
             return -1;
         }
 
@@ -169,6 +170,7 @@ class SocketInputStream extends FileInputStream {
             if (n > 0) {
                 return n;
             }
+	    System.out.println("SocketInputStream.read([b,I,I,I) socketRead: fd = " + fd + " n = " + n);
         } catch (ConnectionResetException rstExc) {
             impl.setConnectionReset();
         } finally {
@@ -194,6 +196,7 @@ class SocketInputStream extends FileInputStream {
      */
     public int read() throws IOException {
         if (eof) {
+            System.out.println("SocketInputStream.read() eof: " + eof);
             return -1;
         }
         temp = new byte[1];
@@ -253,7 +256,8 @@ class SocketInputStream extends FileInputStream {
     }
 
     void setEOF(boolean eof) {
-        this.eof = eof;
+        System.out.println("setEOF: " + eof);
+	this.eof = eof;
     }
 
     /**

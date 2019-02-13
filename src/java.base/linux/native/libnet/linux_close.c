@@ -350,18 +350,20 @@ int NET_SocketClose(int fd) {
  * our wakeup signal)
  */
 #define BLOCKING_IO_RETURN_INT(FD, FUNC) {      \
-    int ret;                                    \
+    int ret = 0;                                    \
     threadEntry_t self;                         \
     fdEntry_t *fdEntry = getFdEntry(FD);        \
     if (fdEntry == NULL) {                      \
         errno = EBADF;                          \
         return -1;                              \
     }                                           \
+    printf("BLOCKING_IO_RETURN_INT before FUNC ret: %d, errno: %d\n", ret, errno); \
     do {                                        \
         startOp(fdEntry, &self);                \
         ret = FUNC;                             \
         endOp(fdEntry, &self);                  \
     } while (ret == -1 && errno == EINTR);      \
+    printf("BLOCKING_IO_RETURN_INT after FUNC ret: %d, errno: %d\n", ret, errno); \
     return ret;                                 \
 }
 

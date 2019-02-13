@@ -605,6 +605,7 @@ abstract class AbstractPlainSocketImpl extends SocketImpl {
       if (fd != null) {
           socketShutdown(SHUT_RD);
           if (socketInputStream != null) {
+	      System.out.println("shutdownInput setEOF");
               socketInputStream.setEOF(true);
           }
           shut_rd = true;
